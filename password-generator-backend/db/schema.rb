@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(version: 2019_07_24_132819) do
     t.integer "password_min"
     t.integer "password_max"
     t.text "chars_not_permitted", default: "--- []\n"
-    t.text "hint", default: "No hint provided."
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

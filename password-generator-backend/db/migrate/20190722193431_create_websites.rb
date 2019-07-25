@@ -6,7 +6,6 @@ class CreateWebsites < ActiveRecord::Migration[5.2]
       t.integer :password_min
       t.integer :password_max
       t.text :chars_not_permitted, default: [].to_yaml
-      t.text :hint, default: "No hint provided."
       t.references :user, foreign_key: true
 
       t.timestamps
