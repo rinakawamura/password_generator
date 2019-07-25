@@ -2,17 +2,17 @@ class WebsitesController < ApplicationController
 
     def create
         website = Website.create(website_params)
-        render json: website
+        render json: website, include: [:accounts]
     end
 
     def index
         websites = Website.all
-        render json: websites
+        render json: websites, include: [:accounts]
     end
 
     def show
         website = Website.find(params[:id])
-        render json: website
+        render json: website, include: [:accounts]
     end
 
     private 
