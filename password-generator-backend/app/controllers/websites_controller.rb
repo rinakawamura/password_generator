@@ -15,6 +15,18 @@ class WebsitesController < ApplicationController
         render json: website, include: [:accounts]
     end
 
+    def update
+        website = Website.find(params[:id])
+        website.update(website_params)
+        render json: website, include: [:accounts]
+    end
+
+    def destroy
+        website = Website.find(params[:id])
+        website.destroy
+        render json: website
+    end
+
     private 
 
     def website_params 
