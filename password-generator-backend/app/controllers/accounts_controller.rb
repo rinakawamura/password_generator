@@ -10,8 +10,12 @@ class AccountsController < ApplicationController
     end
 
     def create
-        account = Account.create(account_params)
-        render json: account
+        account = Account.new(account_params)
+        if account.save 
+            render json: account
+        else
+            render json: {"error": account.errors.full_messages}, status: 406
+        end
     end
 
     def update_username

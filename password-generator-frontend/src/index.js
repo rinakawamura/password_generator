@@ -16,13 +16,25 @@ document.addEventListener("DOMContentLoaded", () => {
 // Display Login
 function displayLogin() {
     let main = document.querySelector('main')
-    main.innerHTML = `
-    <form>
-        <input type="email" name="email"/>
-        <input type="submit"/>
-    </form>`
+    main.innerHTML=""
+    const loginContainer = document.createElement('div')
+    loginContainer.id = 'login-form'
+    main.append(loginContainer)
+    loginContainer.classList.add("center")
 
-    const loginForm = document.querySelector('form')
+    let loginContent = document.createElement('div')
+    loginContainer.append(loginContent)
+
+    loginContent.innerHTML = `
+    <h2>Log In</h2>
+    <form>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="submit" value="Login">
+    </form>
+    <br><br>
+    <span id="new-user-line">Are you a new user? </span>`
+
+    const loginForm = loginContainer.querySelector('form')
     loginForm.addEventListener('submit', e => {
         e.preventDefault()
         const email = e.target[0].value
@@ -48,6 +60,68 @@ function displayLogin() {
                 }
             }   
         })
+    })
+
+    let signupLink = document.createElement('p')
+    signupLink.id = "signup-link"
+    signupLink.innerText = "Register Here"
+    signupLink.style.display = "inline"
+    signupLink.style.color = 'pink'
+    signupLink.style.cursor = 'pointer'
+    document.getElementById('new-user-line').appendChild(signupLink)
+
+    let signupModal = document.createElement('div')
+    main.append(signupModal)
+    signupModal.id = "signupModal"
+    signupModal.classList.add("modal")
+    signupModal.hidden = true
+    signupModal.innerHTML =  `
+        <div id="modal-content">
+            <span class="close">&times;</span>
+            <p>Registration Form</p>
+        </div>
+    `
+    let signupForm = document.createElement('form')
+    signupForm.innerHTML = `
+        <input type="text" placeholder="Name">
+        <input type="email" placeholder="Email">
+        <input type="submit" value="Register">
+    `
+    let errorMsg = document.createElement('div')
+    signupForm.append(errorMsg)
+
+    document.getElementById('modal-content').append(signupForm)
+    signupForm.addEventListener('submit', e => {
+        e.preventDefault();
+        // Fetch request to post new user
+        fetch(`${BASE_URL}/signup`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: e.target[0].value,
+                email: e.target[1].value
+            })
+        }).then(resp => resp.json()).then(user => {
+            if (user.error) {
+                errorMsg.innerHTML = ""
+                user.error.forEach(msg => {
+                    errorMsg.innerHTML += `<p style="color:red;">${msg}</p>`
+                })
+            } else {
+                // Reload Page
+                location.reload()
+            }
+           
+        })
+    })
+    signupModal.querySelector('span').addEventListener('click', () => {
+        document.getElementById('signupModal').hidden = true
+    })
+
+    signupLink.addEventListener('click', e => {
+        document.getElementById('signupModal').hidden = false
     })
 }
 
