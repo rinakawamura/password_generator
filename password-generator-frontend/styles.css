@@ -1,5 +1,15 @@
 main {
-    padding: 50px;
+    padding: 60px;
+    font-family: 'Darker Grotesque', sans-serif;
+    text-align: center;
+}
+
+#key-icon {
+    display: block;
+    float: left;
+    position: relative;
+    top: 10px;
+    color: #5f889e;
 }
 
 #login-form { 
@@ -12,10 +22,14 @@ main {
     padding: 60px 40px;
 }
 
+#login-content, #modal-content {
+    text-align: center;
+}
+
 .center {
     margin: 0;
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -38,10 +52,11 @@ main {
   #modal-content {
     background-color: #fefefe;
     margin: auto;
-    padding: 20px;
+    padding: 40px;
     border: 1px solid #888;
     width: 50%;
     height: 50%;
+    font-size: 20px;
   }
 
   /* The Close Button */
@@ -58,3 +73,107 @@ main {
     text-decoration: none;
     cursor: pointer;
   }
+
+  .error {
+      color: red;
+  }
+
+  input[type="text"], input[type="email"] {
+    outline: none;
+    font-size: 15px;
+    color: black;
+    padding: 15px 40px 15px 10px;
+    width: 87%;
+    border: none;
+    border-bottom: 1px solid #DCCBCF;
+    -webkit-appearance: none;
+    margin-bottom: 30px;
+    background: transparent;
+}
+i {
+    display: inline-block;
+    position: absolute;
+}
+
+#login-container i {
+    right: 0px;
+    top: 80px;
+}
+
+#signup-link {
+    color: #5f889e;
+    font-weight: bold;
+    display: inline;
+    cursor: pointer;
+}
+
+#user-container {
+    float: right;
+}
+
+#user-icon {
+    right: 80px;
+    top: 90px;
+    cursor: pointer;
+    font-size: 19px;
+}
+
+#up {
+    right: 84px;
+    top: 113px;
+    cursor: pointer;
+    color: #5f889e;
+    z-index: 1;
+    background-color: white;
+}
+
+#user-display {
+    width: auto;
+    border-style: solid;
+    border-color: #5f889e;
+    border-width: 2px;
+    padding: 10px;
+}
+
+#user-display p {
+    padding: 0px;
+    margin: 0px;
+    visibility: inherit;
+}
+
+#user-display button {
+    visibility: inherit;
+}
+
+
+#websites-link {
+    cursor: pointer;
+    padding-right: 60px;
+
+}
+
+.clicked {
+    color: #5f889e;
+    font-weight: 900;
+}
+
+#main-content {
+    width: 100%;
+    padding-top: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+#website-list {
+    flex-grow: 1;
+    list-style: none;
+    visibility: inherit;
+}
+
+#web-details {
+    flex-grow: 8;
+    visibility: inherit;
+}
+

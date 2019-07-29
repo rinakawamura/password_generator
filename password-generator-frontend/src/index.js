@@ -1,78 +1,48 @@
 const BASE_URL = "http://localhost:3000"
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    if (localStorage.getItem('user_id')){
-        const user_id = localStorage.getItem('user_id')
-        fetch(`${BASE_URL}/users/${user_id}`).then(res=> res.json()).then(user => {
-            displayHomePage(user)
-        })
-     } else {
-        displayLogin()
-    }
-    
-})
-
-// Display Login
-function displayLogin() {
     let main = document.querySelector('main')
-    main.innerHTML=""
+    let keyIcon = document.createElement('div')
+    keyIcon.id = 'key-icon'
+    keyIcon.innerHTML = '<i class="fas fa-key fa-3x"></i>'
+    main.append(keyIcon)
+
+    let userContainer = document.createElement('span')
+    userContainer.id = 'user-container'
+    userContainer.hidden = true
+    main.append(userContainer)
+    userContainer.innerHTML = `
+    <p id='websites-link'>My Websites</p>
+    <i id='user-icon' class="far fa-user-circle"></i>
+    <div id="user-display"></div>
+    `
+    document.getElementById('user-display').innerHTML = `
+    <i id='up' class="fas fa-angle-up"></i>
+    <p id="user-name"></p>
+    <p id="user-email"></p>
+    `
+
+    const logoutButton = document.createElement('button')
+    logoutButton.id = 'logout-button'
+    logoutButton.innerText = "Log Out"
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('user_id')
+        displayLogin()
+    })
+    document.getElementById('user-display').append(logoutButton)
+
     const loginContainer = document.createElement('div')
-    loginContainer.id = 'login-form'
+    loginContainer.id = 'login-container'
     main.append(loginContainer)
     loginContainer.classList.add("center")
-
+    loginContainer.hidden = true
     let loginContent = document.createElement('div')
+    loginContent.id = 'login-content'
     loginContainer.append(loginContent)
 
-    loginContent.innerHTML = `
-    <h2>Log In</h2>
-    <form>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="submit" value="Login">
-    </form>
-    <br><br>
-    <span id="new-user-line">Are you a new user? </span>`
-
-    const loginForm = loginContainer.querySelector('form')
-    loginForm.addEventListener('submit', e => {
-        e.preventDefault()
-        const email = e.target[0].value
-        fetch(`${BASE_URL}/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": 'application/json'
-            },
-            body: JSON.stringify({
-              "email": email
-            })
-        }).then(res => res.json()).then(data => {
-            if (data.id) {
-                localStorage.setItem("user_id", data.id)
-                displayHomePage(data)
-            } else {
-                console.log(data.error)
-                if (!document.getElementById('error-msg')) {
-                    let errorMsg = document.createElement('h4')
-                    errorMsg.id = 'error-msg'
-                    errorMsg.innerText = data.error
-                    main.appendChild(errorMsg)
-                }
-            }   
-        })
-    })
-
-    let signupLink = document.createElement('p')
-    signupLink.id = "signup-link"
-    signupLink.innerText = "Register Here"
-    signupLink.style.display = "inline"
-    signupLink.style.color = 'pink'
-    signupLink.style.cursor = 'pointer'
-    document.getElementById('new-user-line').appendChild(signupLink)
-
     let signupModal = document.createElement('div')
+    signupModal.id = 'signup-modal'
     main.append(signupModal)
-    signupModal.id = "signupModal"
     signupModal.classList.add("modal")
     signupModal.hidden = true
     signupModal.innerHTML =  `
@@ -81,6 +51,7 @@ function displayLogin() {
             <p>Registration Form</p>
         </div>
     `
+    
     let signupForm = document.createElement('form')
     signupForm.innerHTML = `
         <input type="text" placeholder="Name">
@@ -117,23 +88,141 @@ function displayLogin() {
         })
     })
     signupModal.querySelector('span').addEventListener('click', () => {
-        document.getElementById('signupModal').hidden = true
+        document.getElementById('signup-modal').hidden = true
     })
 
-    signupLink.addEventListener('click', e => {
-        document.getElementById('signupModal').hidden = false
+    let mainContent = document.createElement('div')
+    mainContent.id = 'main-content'
+    mainContent.hidden = true
+    main.append(mainContent)
+
+    // Div element to display all websites
+    let uList = document.createElement('ul')
+    uList.id = "website-list"
+    mainContent.append(uList)
+
+    // Div element to display website details 
+    let webDetails = document.createElement('div')
+    webDetails.id = "web-details"
+    mainContent.appendChild(webDetails)
+    
+    
+    if (localStorage.getItem('user_id')){
+        const user_id = localStorage.getItem('user_id')
+        fetch(`${BASE_URL}/users/${user_id}`).then(res=> res.json()).then(user => {
+            displayHomePage(user)
+        })
+     } else {
+        displayLogin()
+    }
+    
+})
+
+// Display Login
+function displayLogin() {
+    let main = document.querySelector('main')
+    document.getElementById('user-container').hidden = true
+    document.getElementById('main-content').hidden = true
+
+    let loginContainer = document.getElementById('login-container')
+    loginContainer.hidden = false
+    
+    let loginContent = document.getElementById('login-content')
+    loginContent.innerHTML = `
+    <h2>Log In</h2>
+    <form>
+        <div id='form-input'>
+            <input type="email" name="email" placeholder="Email" required>
+            <i class="fas fa-user"></i>
+        </div>
+        <input type="submit" value="Login">
+    </form>
+    <br>
+    <span id="new-user-line">Are you a new user? </span>`
+
+    const loginForm = loginContainer.querySelector('form')
+    loginForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const email = e.target[0].value
+        fetch(`${BASE_URL}/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": 'application/json'
+            },
+            body: JSON.stringify({
+              "email": email
+            })
+        }).then(res => res.json()).then(data => {
+            if (data.id) {
+                localStorage.setItem("user_id", data.id)
+
+                document.getElementById('websites-link').addEventListener('click', e => {
+                    displayHomePage(data)
+                })
+
+                displayHomePage(data)
+            } else {
+                console.log(data.error)
+                if (!document.getElementById('error-msg')) {
+                    let errorMsg = document.createElement('h4')
+                    errorMsg.id = 'error-msg'
+                    errorMsg.innerText = data.error
+                    errorMsg.classList.add('error')
+                    loginContent.insertBefore(errorMsg, document.getElementById('new-user-line'))
+                }
+            }   
+        })
     })
+
+    let signupLink = document.createElement('p')
+    signupLink.id = "signup-link"
+    signupLink.innerText = "Register Here"
+
+    document.getElementById('new-user-line').appendChild(signupLink)
+
+    let signupModal = document.getElementById('signup-modal')
+    signupModal.hidden = true
+
+    signupLink.addEventListener('click', e => {
+        document.getElementById('signup-modal').hidden = false
+    })
+
+    
 }
 
 // Display Home Page 
 function displayHomePage(user) {
+    document.getElementById('websites-link').classList.add('clicked')
     let main = document.querySelector('main')
-    main.innerHTML = `${user.name}
-    <button id="logout">Logout</button>`
+    document.getElementById('login-container').hidden = true
+
+    let userContainer = document.getElementById('user-container')
+    userContainer.hidden = false
+
+    let userIcon = document.getElementById('user-icon')
+    let userDisplay = document.getElementById('user-display')
+    userDisplay.hidden = true
+    document.getElementById('user-name').innerText = user.name
+    document.getElementById('user-email').innerText = user.email
+
+    userIcon.addEventListener('click', e => {
+        if (userIcon.classList.contains('clicked')) {
+            userIcon.classList.remove('clicked')
+            userDisplay.hidden = true
+        } else {
+            userIcon.classList.add('clicked')
+            userDisplay.hidden = false
+        }
+    })
+    // userContainer.innerHTML = ""
+    // userContainer.innerHTML = `${user.name}
+    // <button id="logout">Logout</button>`
+
+    document.getElementById('main-content').hidden = false
 
     // UL element to display all of the user's websites
-    let uList = document.createElement('ul')
-    uList.id = "website-list"
+    let uList = document.getElementById('website-list')
+    uList.innerHTML = ""
 
     let newLi = document.createElement('li')
     newLi.id = "new-website-list"
@@ -149,13 +238,8 @@ function displayHomePage(user) {
         })
     })
 
-    // Display websites within UL element
-    main.appendChild(uList)
-
-    // Div element to display website details 
-    let webDetails = document.createElement('div')
-    webDetails.id = "web-details"
-    main.appendChild(webDetails)
+    let webDetails = document.getElementById('web-details')
+    webDetails.innerHTML = ""
 
     // Div element for website main details (name, url)
     let mainDetails = document.createElement('div')
@@ -219,12 +303,6 @@ function displayHomePage(user) {
                 displayWebsite(website)
             })  
         }
-    })
-
-    const logoutButton = document.getElementById('logout')
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('user_id')
-        displayLogin()
     })
 
     displayWebsite("none")
