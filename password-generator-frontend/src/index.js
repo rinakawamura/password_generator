@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let signupForm = document.createElement('form')
     signupForm.innerHTML = `
         <input type="text" placeholder="Name">
-        <input type="email" placeholder="Email">
+        <input type="email" placeholder="Email"><br>
         <input type="submit" value="Register">
     `
     let errorMsg = document.createElement('div')
@@ -110,6 +110,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let uList = document.createElement('ul')
     uList.id = "website-list"
     websitesDisplay.append(uList)
+
+    let searchInput = document.createElement('form')
+    searchInput.id = "search-form"
+    searchInput.innerHTML = `
+    <i class="fas fa-search"></i>
+    <input id= "search-input" type="text" onkeyup="search()" placeholder="Search for Websites...">`
+    websitesDisplay.insertBefore(searchInput, uList)
+
 
     // Button to add new website
     let newWebsiteButton = document.createElement('button')
@@ -565,3 +573,21 @@ function backToAccountDetails(account, website) {
 
 
 
+
+// Search bar functionality
+function search() {
+    let input = document.getElementById('search-input')
+    let filter = input.value.toUpperCase()
+    let uL = document.getElementById('website-list')
+    let lis = uL.querySelectorAll('li')
+    let i;
+
+    for (i = 0; i < lis.length; i++) {
+        let content = lis[i].textContent
+        if (content.toUpperCase().indexOf(filter) > -1) {
+            lis[i].hidden = false
+        } else {
+            lis[i].hidden = true
+        }
+    }
+}
