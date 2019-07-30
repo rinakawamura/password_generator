@@ -1,14 +1,62 @@
+body {
+    min-width: 800px;
+}
 main {
-    padding: 60px;
+    height: 90vh;
     font-family: 'Darker Grotesque', sans-serif;
     text-align: center;
+    margin: 3% 5%;
+}
+
+/* General Styling */
+h2, h3 {
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+/* Buttons */
+button, input[type='submit']{
+    border: 1px solid #5f889e;
+    background-color: white;
+    box-shadow: 2px 3px #43606f;
+    font-family: 'Darker Grotesque', sans-serif;
+    font-size: 16px;
+    font-weight: bolder;
+    color: #5f889e;
+    padding: 2% 4%;
+    margin: 1% 2%;
+}
+
+/* Placement of Back Buttons */
+.back {
+    font-size: 13px;
+    padding: 3px 12px; 
+    padding-left: 3%;
+}
+
+.back i {
+    position: relative;
+    right: 6.5%;
+    top: 1px;
+}
+
+
+
+button:hover, input[type='submit']:hover {
+    background-color: #5f889e;
+    color: white;
+
 }
 
 #key-icon {
-    display: block;
-    float: left;
-    position: relative;
-    top: 10px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 10%;
+    height: 10%;
+    padding-left: 5%;
+    font-size: 5em;
     color: #5f889e;
 }
 
@@ -79,17 +127,19 @@ main {
   }
 
   input[type="text"], input[type="email"] {
+    text-align: center;
     outline: none;
     font-size: 15px;
     color: black;
     padding: 15px 40px 15px 10px;
-    width: 87%;
     border: none;
+    width: 60%;
     border-bottom: 1px solid #DCCBCF;
     -webkit-appearance: none;
     margin-bottom: 30px;
     background: transparent;
 }
+
 i {
     display: inline-block;
     position: absolute;
@@ -97,7 +147,7 @@ i {
 
 #login-container i {
     right: 0px;
-    top: 80px;
+    top: 90px;
 }
 
 #signup-link {
@@ -108,48 +158,83 @@ i {
 }
 
 #user-container {
-    float: right;
+    top: 45px;
+    padding: 20px;
+    width: 30vw;
+    height: 50vw;
+    right: 0;
+    position: absolute;
 }
 
 #user-icon {
-    right: 80px;
-    top: 90px;
+    position: absolute;
+    top: 27px;
+    right: 25%;
     cursor: pointer;
-    font-size: 19px;
+    font-size: 25px;
 }
 
 #up {
-    right: 84px;
-    top: 113px;
+    position: absolute;
+    right: 27%;
+    top: 69px;
     cursor: pointer;
     color: #5f889e;
-    z-index: 1;
+    z-index: 2;
     background-color: white;
 }
 
-#user-display {
+.clearfix {
+    overflow: auto;
+}
+
+#user-display-content {
     width: auto;
+    margin: 15%;
+    background-color: white;
+    position: relative;
+    z-index: 1;
+}
+
+#user-display {
+    right: 20%;
+    top: 77px;
+    position: absolute;
+    width: 70%;
+    z-index: 1;
     border-style: solid;
     border-color: #5f889e;
     border-width: 2px;
-    padding: 10px;
+    background-color: white;
+
 }
 
 #user-display p {
-    padding: 0px;
     margin: 0px;
     visibility: inherit;
 }
 
+#user-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#user-email {
+    font-size: 12px;
+}
+
 #user-display button {
     visibility: inherit;
+    margin-bottom: 10%;
 }
 
 
 #websites-link {
+    margin: 0;
     cursor: pointer;
-    padding-right: 60px;
-
+    padding-right: 40%;
+    font-size: 1.5em;
+    font-weight: bolder;
 }
 
 .clicked {
@@ -158,22 +243,52 @@ i {
 }
 
 #main-content {
-    width: 100%;
-    padding-top: 50px;
+    position: relative;
+    top: 20%;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     text-align: center;
 }
 
-#website-list {
+#websites-display {
     flex-grow: 1;
-    list-style: none;
     visibility: inherit;
+    padding: 0 5%;
+}
+
+#website-list {
+    padding: 0;
+}
+
+#website-list li {
+    padding: 10%;
+    border-bottom: 1px solid #5f889e;
+    cursor: pointer;
+    list-style: none;
+}
+
+#websites-display button {
+    padding: 5%;
+    margin-top: 20%;
 }
 
 #web-details {
     flex-grow: 8;
     visibility: inherit;
+    margin: 0 5%;
 }
 
+
+[hidden]{
+    display:none;
+    visibility: hidden;
+}
+
+li i {
+    color: #5f889e;
+    position: relative;
+    left: 38%;
+    top: 4px;
+    font-size: 1.3em;
+}

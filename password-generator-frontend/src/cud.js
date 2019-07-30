@@ -4,7 +4,7 @@
 function newWebsite(user) {
     // Hide buttons
     document.getElementById('edit-website-button').hidden = true
-    document.getElementById('delete-website').hidden = true
+    document.getElementById('delete-website-button').hidden = true
 
     let mainDetails = document.getElementById('main-details')
     let webList = document.getElementById('website-list')
@@ -20,18 +20,18 @@ function newWebsite(user) {
     subForm.appendChild(websiteForm)
     subForm.hidden = false
     websiteForm.innerHTML = `
-        Website Name<input type="text" name="name"/>
-        Website URL<input type="text" name="url"/>
+        Website Name<br><input type="text" name="name"/><br>
+        Website URL<br><input type="text" name="url"/>
         <br>
         <h3> Password Details</h3>
         Minimum Password Length 
         <div class="slidecontainer">
-        <input type="range" name="rangeInput" min="1" max="50" value="8" onchange="updateMinSlider(this.value);">
+        <input type="range" name="rangeInput" min="1" max="50" value="8" oninput="updateMinSlider(this.value);">
         <p id="display-min" style="display:inline;">8</p>
         </div>
         Maximum Password Length
         <div class="slidecontainer">
-        <input type="range" name="rangeInput" min="1" max="128" value="128" onchange="updateMaxSlider(this.value);">
+        <input type="range" name="rangeInput" min="1" max="128" value="128" oninput="updateMaxSlider(this.value);">
         <p id="display-max" style="display:inline;">128</p>
         </div>
         <input type="submit"/>
@@ -60,7 +60,7 @@ function newWebsite(user) {
                 "user_id": user.id
             })
         }).then(resp => resp.json()).then(website => {
-            webList.innerHTML += `<li class="list-item" data-id=${website.id}>${website.name}</li>`
+            webList.innerHTML += `<li class="list-item" data-id=${website.id}>${website.name}<i class="fas fa-angle-double-right"></i></li>`
             displayWebsite(website)
         })
     })
@@ -73,6 +73,7 @@ function updateWebsite(website) {
     document.getElementById('sub-display-top').hidden = true
     document.getElementById('sub-display-bottom').hidden = true
     document.getElementById('edit-website-button').hidden = true
+    document.getElementById('delete-website-button').hidden = true
 
     let subForm = document.getElementById('sub-form')
     subForm.innerHTML = ""
@@ -167,7 +168,7 @@ function deleteWebsite(website){
 function newAccount(website) {
     // Hide Elements
     document.getElementById('edit-website-button').hidden = true
-    document.getElementById('delete-website').hidden = true
+    document.getElementById('delete-website-button').hidden = true
     backToWebsiteDetails(website)
 
     let subDisplayTop = document.getElementById('sub-display-top')

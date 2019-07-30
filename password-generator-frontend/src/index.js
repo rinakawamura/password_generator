@@ -2,24 +2,29 @@ const BASE_URL = "http://localhost:3000"
 
 document.addEventListener("DOMContentLoaded", () => {
     let main = document.querySelector('main')
-    let keyIcon = document.createElement('div')
-    keyIcon.id = 'key-icon'
-    keyIcon.innerHTML = '<i class="fas fa-key fa-3x"></i>'
-    main.append(keyIcon)
+    main.innerHTML = '<i id="key-icon" class="fas fa-key fa-3x"></i>'
+    // let keyIcon = document.createElement('div')
+    // keyIcon.id = 'key-icon'
+    // keyIcon.innerHTML = '<i class="fas fa-key fa-3x"></i>'
+    // main.append(keyIcon)
 
-    let userContainer = document.createElement('span')
+    let userContainer = document.createElement('div')
     userContainer.id = 'user-container'
+    userContainer.classList.add("clearfix")
     userContainer.hidden = true
     main.append(userContainer)
     userContainer.innerHTML = `
     <p id='websites-link'>My Websites</p>
     <i id='user-icon' class="far fa-user-circle"></i>
-    <div id="user-display"></div>
+    <i id='up' class="fas fa-angle-up" hidden></i>    
+    <div id="user-display" class="clearfix"></div>
     `
+
     document.getElementById('user-display').innerHTML = `
-    <i id='up' class="fas fa-angle-up"></i>
-    <p id="user-name"></p>
-    <p id="user-email"></p>
+    <div id="user-display-content">
+        <p id="user-name"></p>
+        <p id="user-email"></p>
+    </div>
     `
 
     const logoutButton = document.createElement('button')
@@ -96,10 +101,21 @@ document.addEventListener("DOMContentLoaded", () => {
     mainContent.hidden = true
     main.append(mainContent)
 
+    let websitesDisplay = document.createElement('div')
+    websitesDisplay.id = 'websites-display'
+    websitesDisplay.classList.add('clearfix')
+    mainContent.append(websitesDisplay)
+
     // Div element to display all websites
     let uList = document.createElement('ul')
     uList.id = "website-list"
-    mainContent.append(uList)
+    websitesDisplay.append(uList)
+
+    // Button to add new website
+    let newWebsiteButton = document.createElement('button')
+    newWebsiteButton.id = "new-website-button"
+    newWebsiteButton.innerText = "Add New Website"
+    websitesDisplay.append(newWebsiteButton)
 
     // Div element to display website details 
     let webDetails = document.createElement('div')
@@ -137,7 +153,6 @@ function displayLogin() {
         </div>
         <input type="submit" value="Login">
     </form>
-    <br>
     <span id="new-user-line">Are you a new user? </span>`
 
     const loginForm = loginContainer.querySelector('form')
@@ -200,18 +215,26 @@ function displayHomePage(user) {
     userContainer.hidden = false
 
     let userIcon = document.getElementById('user-icon')
+    userIcon.classList.remove('clicked')
+
     let userDisplay = document.getElementById('user-display')
     userDisplay.hidden = true
+    document.getElementById('up').hidden = true
+    
     document.getElementById('user-name').innerText = user.name
     document.getElementById('user-email').innerText = user.email
 
     userIcon.addEventListener('click', e => {
         if (userIcon.classList.contains('clicked')) {
             userIcon.classList.remove('clicked')
+            document.getElementById('up').hidden = true
+            userContainer.style.zIndex = 0;
             userDisplay.hidden = true
         } else {
             userIcon.classList.add('clicked')
+            document.getElementById('up').hidden = false
             userDisplay.hidden = false
+            userContainer.style.zIndex = 1;
         }
     })
     // userContainer.innerHTML = ""
@@ -224,10 +247,10 @@ function displayHomePage(user) {
     let uList = document.getElementById('website-list')
     uList.innerHTML = ""
 
-    let newLi = document.createElement('li')
-    newLi.id = "new-website-list"
-    newLi.innerText = "Register New Website"
-    uList.appendChild(newLi)
+    // let newLi = document.createElement('li')
+    // newLi.id = "new-website-button"
+    // newLi.innerText = "Register New Website"
+    // uList.appendChild(newLi)
     
     // Fetch request to get all websites
     fetch(`${BASE_URL}/websites`).then(resp => resp.json()).then(data => {
@@ -237,6 +260,8 @@ function displayHomePage(user) {
             }
         })
     })
+
+    let newWebsiteButton = document.getElementById('new-website-button')
 
     let webDetails = document.getElementById('web-details')
     webDetails.innerHTML = ""
@@ -250,13 +275,15 @@ function displayHomePage(user) {
 
     let backWebsite = document.createElement('button')
     backWebsite.id = 'back-website-button'
-    backWebsite.innerText = "Back to Website Details"
+    backWebsite.classList.add('back')
+    backWebsite.innerHTML = `<i class="fas fa-backward"></i> Back to Website Details`
     backWebsite.hidden = true
     webDetails.appendChild(backWebsite)
 
     let backAccount = document.createElement('button')
     backAccount.id = 'back-account-button'
-    backAccount.innerText = "Back to Account Details"
+    backAccount.classList.add('back')
+    backAccount.innerHTML = `<i class="fas fa-backward"></i> Back`
     backAccount.hidden = true
     webDetails.appendChild(backAccount)
 
@@ -266,8 +293,9 @@ function displayHomePage(user) {
     editWebsite.hidden = true
     webDetails.appendChild(editWebsite)
 
-    let deleteWebsite = document.createElement('div')
-    deleteWebsite.id = 'delete-website'
+    let deleteWebsite = document.createElement('button')
+    deleteWebsite.id = 'delete-website-button'
+    deleteWebsite.innerText = "Delete Website"
     deleteWebsite.hidden = true
     webDetails.appendChild(deleteWebsite)
 
@@ -295,17 +323,41 @@ function displayHomePage(user) {
     subDetails.appendChild(subDisplayBottom)
 
     uList.addEventListener('click', e => {
-        if (e.target.id === "new-website-list"){
-            newWebsite(user)
-        } else if (e.target.classList.contains('list-item')) {
+        // clear icons from all uLists
+        clearListIcons()
+        // if (e.target.id === "new-website-button"){
+        //     newWebsite(user)
+        // } else 
+        if (e.target.classList.contains('list-item')) {
             // Fetch single website data
             fetch(`${BASE_URL}/websites/${e.target.dataset.id}`).then(resp => resp.json()).then(website => {
+
+                // add icon to selected
+                const icon = document.createElement('i')
+                icon.classList.add("fas")
+                icon.classList.add("fa-angle-double-right")
+                e.target.append(icon)
                 displayWebsite(website)
             })  
         }
     })
 
+    newWebsiteButton.addEventListener('click', e => {
+        newWebsite(user)
+    })
+
     displayWebsite("none")
+}
+
+function clearListIcons() {
+    let uL = document.getElementById('website-list')
+    let lists = document.querySelectorAll('li')
+    let i;
+    for (i = 0; i < lists.length; i++) {
+        if (lists[i].querySelector('i')) {
+            lists[i].removeChild(lists[i].querySelector('i'))
+        }
+    }
 }
 
 // Function to get website details
@@ -324,7 +376,7 @@ function displayWebsite(website) {
     // Default: If no website given
     if (website === "none") {
         document.getElementById('edit-website-button').hidden = true
-        document.getElementById('delete-website').hidden = true
+        document.getElementById('delete-website-button').hidden = true
 
         mainDetails.innerHTML = `<h2>Select Website to See Details<h2>`
         subDisplayTop.innerHTML = ""
@@ -332,7 +384,7 @@ function displayWebsite(website) {
         mainDetails.innerHTML = `
         <h2>${website.name}</h2>
         <p><a href=${website.url}>${website.url}</a></p>
-        <br>`
+       `
 
         let editButton = document.getElementById('edit-website-button')
         editButton.hidden = false
@@ -341,15 +393,9 @@ function displayWebsite(website) {
             updateWebsite(website)
         })
 
-        let deleteWebsiteDiv = document.getElementById('delete-website')
-        deleteWebsiteDiv.innerHTML = ""
-        deleteWebsiteDiv.hidden = false
-
-        let deleteWebsiteButton = document.createElement('button')
-        deleteWebsiteButton.id = 'delete-website-button'
-        deleteWebsiteButton.innerText = "Delete Website"
-        deleteWebsiteDiv.append(deleteWebsiteButton)
-
+        
+        let deleteWebsiteButton = document.getElementById('delete-website-button')
+        deleteWebsiteButton.hidden = false
         deleteWebsiteButton.addEventListener('click', e => {
             deleteWebsite(website)
         })
@@ -377,7 +423,7 @@ function displayWebsite(website) {
         subDisplayTop.appendChild(accountContainer)
 
         // Fetch accounts belonging to website
-        accountContainer.innerHTML += "<br><br><h3>Accounts</h3>"
+        accountContainer.innerHTML += "<h3>Accounts</h3>"
 
         if (website.accounts.length === 0) {
             accountContainer.innerHTML += "<p>No Accounts Created</p>"
@@ -435,7 +481,7 @@ function displayWebsite(website) {
 function displayAccount(account, website) {
     // Hide Buttons
     document.getElementById('edit-website-button').hidden = true
-    document.getElementById('delete-website').hidden = true
+    document.getElementById('delete-website-button').hidden = true
     document.getElementById('back-account-button').hidden = true
 
     let subDisplayTop = document.getElementById('sub-display-top')
@@ -459,9 +505,9 @@ function displayAccount(account, website) {
 
     let passwordForm = document.createElement('form')
     passwordForm.innerHTML = `
-    Enter Key Word/Phrase to Get Password<br><br>
+    Enter Key Word/Phrase to Get Password
     <input type="text">
-    <input type="submit" value="Go"><br><br><br>`
+    <input type="submit" value="Go">`
     subForm.append(passwordForm)
 
     let displayPassword = document.createElement('div')
