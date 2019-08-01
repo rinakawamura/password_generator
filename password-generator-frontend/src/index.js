@@ -354,7 +354,9 @@ function displayHomePage(user) {
     let editWebsite = document.createElement('button')
     editWebsite.id = 'edit-website-button'
     editWebsite.classList.add("icon-button")
-    editWebsite.innerHTML = `Edit Details<i class="far fa-edit"></i>`
+    editWebsite.classList.add("edit-delete")
+
+    editWebsite.innerHTML = `Edit Details  <i class="far fa-edit"></i>`
     editWebsite.hidden = true
     webDetails.appendChild(editWebsite)
 
@@ -461,7 +463,8 @@ function displayWebsite(website) {
         
         let deleteWebsiteButton = document.createElement('button')
         deleteWebsiteButton.classList.add('icon-button')
-        deleteWebsiteButton.innerHTML = `Delete Website<i class="fas fa-trash-alt"></i>`
+        deleteWebsiteButton.classList.add("edit-delete")
+        deleteWebsiteButton.innerHTML = `Delete Website<i class="far fa-trash-alt"></i>`
         let deleteWebsiteDiv = document.getElementById('delete-website-div')
         deleteWebsiteDiv.innerHTML = ''
         deleteWebsiteDiv.append(deleteWebsiteButton)
@@ -477,7 +480,7 @@ function displayWebsite(website) {
         <p>Minimum Password Length: ${website.password_min}</p>
         <p>Maximum Password Length: ${website.password_max}</p>`
 
-        let unpermittedCharString = website.chars_not_permitted.join(", ")
+        let unpermittedCharString = website.chars_not_permitted.join("\xa0\xa0")
         let unpermittedChars = document.createElement('p')
         unpermittedChars.innerText = "Unpermitted Special Characters: "
         if (website.chars_not_permitted.length === 0){

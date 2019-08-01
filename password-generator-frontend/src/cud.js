@@ -347,35 +347,9 @@ function newAccount(website) {
                     <h2>Username: ${account.username}</h2>`
 
                     fetch(`${BASE_URL}/websites/${website.id}`).then(resp => resp.json()).then(website => {
-                        backToWebsiteDetails(website)
+                        backToAccountDetails(account, website)
                     })
                 }
-                
-                // let form = document.getElementById('sub-form')
-                // form.innerHTML = ""
-                // form.hidden = true
-                // subDisplayBottom.innerHTML = ""
-                // subDisplayBottom.hidden = true
-
-                // subDisplayTop.innerHTML = `
-                // <h1>New Account Details</h1>
-                // <h2>Username: ${account.username}</h2>
-                // <h2>Key word/phrase used: ${keyword}</h2>
-                // <p>Note: You will not be able to retrieve your password without this key word/phrase!</p>
-                // `
-
-                // let seePassword = document.createElement('button')
-                // seePassword.innerText = "See Password"
-                // subDisplayTop.appendChild(seePassword)
-
-                // let display = document.createElement('div')
-                // subDisplayTop.appendChild(display)
-
-                // seePassword.addEventListener('click', e => {
-                //     display.innerHTML = `<h3>Password: ${generatePassword(keyword, account.key, account.special_char, account.char_frequency, account.digit, account.digit_frequency, website.chars_not_permitted, website.password_min, website.password_max)}</h3>`
-                // })
-
-                // Re-fetch website with updated accounts
                 
             })
         })
@@ -528,6 +502,7 @@ function deleteAccount(account) {
 }
 
 function afterKeySave(account, website) {
+    document.getElementById('back-website-button').hidden = true
     let form = document.getElementById('sub-form')
     let subDisplayTop = document.getElementById('sub-display-top')
     let subDisplayBottom = document.getElementById('sub-display-bottom')

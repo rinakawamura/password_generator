@@ -78,7 +78,8 @@ h2{
 }
 
 h3 {
-    margin: 4% 0;
+    margin: 0;
+    padding: 0;
 }
 
 p{
@@ -105,12 +106,12 @@ input[type="text"], input[type="email"], input[type="password"] {
     outline: none;
     font-size: 15px;
     color: black;
-    padding: 3%;
+    padding: 2% 4%;
     border: none;
-    width: 60%;
+    width: 70%;
     border-bottom: 1px solid #DCCBCF;
     -webkit-appearance: none;
-    margin-bottom: 30px;
+    margin-bottom: 7%;
     background: transparent;
 }
 
@@ -162,6 +163,10 @@ button:hover, input[type='submit']:hover {
     display: inline;
     margin-bottom: 5%;
 }
+
+#delete-website-div[hidden] {
+    display: none;
+}
 .icon-button {
     display: inline;
     font-size: 14px;
@@ -185,7 +190,7 @@ input[type="submit"].small, button.small {
     padding: 3px 12px; 
     padding-left: 3%;
     position: relative;
-    bottom: 10vh;
+    bottom: 15vh;
     right: 18vw;
     margin: 0;
 }
@@ -422,21 +427,26 @@ font-family: 'Darker Grotesque', sans-serif;
 
 /* List of websites */
 #website-list {
+    overflow-y: scroll;
+    max-height: 50vh;
     padding: 0;
+    margin-top: 5%;
 }
+
 
 #website-list li {
     padding: 10%;
     border-bottom: 1px solid #5f889e;
     cursor: pointer;
     list-style: none;
+    position: relative;
 }
 
 #website-list li i {
     color: #5f889e;
-    position: relative;
-    left: 38%;
-    top: 4px;
+    position: absolute;
+    left: 89%;
+    top: 40%;
     font-size: 1.3em;
 }
 
@@ -452,12 +462,14 @@ font-family: 'Darker Grotesque', sans-serif;
     text-align: left;
     padding: 10px 10px 10px 40px;
     margin: 0;
-    width: 170px;
+    width: 175px;
     height: 20px;
 }
 
 #search-form {
     position: relative;
+    top: 5vh;
+    margin-bottom: 15%;
 }
 
 #search-form i {
@@ -478,15 +490,19 @@ font-family: 'Darker Grotesque', sans-serif;
 
 /* Website Display */
 .website-link {
-    margin: 3% 0;
+    margin-bottom: 5%;
 }
 
 #main-details h2 {
-    margin-top: 6%;
+    margin-top: 8%;
 }
 
-#delete-website-button {
-    margin-bottom: 10%;
+.edit-delete {
+    margin: 0% 3% 15%;
+}
+
+.edit-delete[hidden] {
+    display: none;
 }
 
 #account-container {
@@ -513,6 +529,22 @@ font-family: 'Darker Grotesque', sans-serif;
     right: 1.3vw;
     cursor: pointer;
     border-radius: 0;
+}
+
+#website-form h3, #sub-display-top h3 {
+    margin-bottom: 4%;
+}
+
+.slidecontainer {
+    margin: 2% 3%;
+}
+
+#encrypted {
+    color: #5f889e;
+}
+
+#sub-display-bottom {
+    margin-top: 6%;
 }
 
 /* Account Details */
