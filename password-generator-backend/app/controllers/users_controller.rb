@@ -10,10 +10,11 @@ class UsersController < ApplicationController
 	
     def login
 		user = User.find_by(email: params[:email])
-		if user
+
+		if user && user.authenticate(params["password"])
 			render json: user
 		else
-			render json: {error: "No user found", status: 401}
+			render json: {error: "Incorrect email or password", status: 401}
 		end
     end
     
@@ -24,6 +25,6 @@ class UsersController < ApplicationController
 
 	private 
 	def user_params 
-		params.permit(:name, :email)
+		params.permit(:name, :email, :password, :password_confirmation)
 	end
 end

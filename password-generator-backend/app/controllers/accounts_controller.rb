@@ -6,7 +6,11 @@ class AccountsController < ApplicationController
 
     def show
         account = Account.find(params[:id])
-        render json: account
+        if account 
+            render json: account
+        else
+            render json: {"error": "Select an Account"}
+        end
     end
 
     def create
@@ -21,13 +25,21 @@ class AccountsController < ApplicationController
     def update_username
         account = Account.find(params[:id])
         account.update(username: params[:username])
-        render json: account
+        if account.save
+            render json: account
+        else
+            render json: {"error": account.errors.full_messages}, status: 406
+        end
     end
 
     def update_keys
         account = Account.find(params[:id])
         account.update(key_params)
-        render json: account
+        if account.save
+            render json: account
+        else
+            render json: {"error": account.errors.full_messages}, status: 406
+        end
     end
 
     def destroy

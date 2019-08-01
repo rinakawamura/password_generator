@@ -4,7 +4,7 @@
 function generateRandoms(unpermitted) {
     let randoms = new Object()
     randoms.key = Math.random().toString(36).slice(2) 
-    let specialChars = ['!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '\'', '\"']
+    let specialChars = ['!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '{', '|', '}', '~', '\'', '\"']
     unpermitted.forEach(element => {
         let index = specialChars.indexOf(element)
         if (index > -1) {

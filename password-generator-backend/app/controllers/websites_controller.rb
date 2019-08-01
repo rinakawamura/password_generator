@@ -1,10 +1,4 @@
 class WebsitesController < ApplicationController
-
-    def create
-        website = Website.create(website_params)
-        render json: website, include: [:accounts]
-    end
-
     def index
         websites = Website.all
         render json: websites, include: [:accounts]
@@ -15,10 +9,23 @@ class WebsitesController < ApplicationController
         render json: website, include: [:accounts]
     end
 
+    def create
+        website = Website.new(website_params)
+        if website.save
+            render json: website, include: [:accounts]
+        else 
+			render json: {"error": website.errors.full_messages}, status: 406
+        end
+    end
+
     def update
         website = Website.find(params[:id])
         website.update(website_params)
-        render json: website, include: [:accounts]
+        if website.save
+            render json: website, include: [:accounts]
+        else
+			render json: {"error": website.errors.full_messages}, status: 406
+        end
     end
 
     def destroy
@@ -30,6 +37,6 @@ class WebsitesController < ApplicationController
     private 
 
     def website_params 
-        params.permit(:name, :url, :password_min, :password_max, :chars_not_permitted, :key, :special_char, :char_frequency, :digit, :digit_frequency, :hint, :user_id)
+        params.permit(:name, :url, :password_min, :password_max, :user_id, :chars_not_permitted => [])
     end
 end

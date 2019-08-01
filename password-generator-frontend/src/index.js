@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // keyIcon.innerHTML = '<i class="fas fa-key fa-3x"></i>'
     // main.append(keyIcon)
 
+    let copied = document.createElement('div')
+    copied.id = "copied"
+    copied.classList.add('center')
+    // copied.hidden = true
+    copied.innerHTML = `<p class="center">Copied!</p>`
+    main.append(copied)
+
     let userContainer = document.createElement('div')
     userContainer.id = 'user-container'
     userContainer.classList.add("clearfix")
@@ -16,9 +23,27 @@ document.addEventListener("DOMContentLoaded", () => {
     userContainer.innerHTML = `
     <p id='websites-link'>My Websites</p>
     <i id='user-icon' class="far fa-user-circle"></i>
-    <i id='up' class="fas fa-angle-up" hidden></i>    
+    <i id='up' class="fas fa-angle-up"></i>    
     <div id="user-display" class="clearfix"></div>
     `
+    let userIcon = document.getElementById('user-icon')
+    let userDisplay = document.getElementById('user-display')
+
+    userIcon.addEventListener('click', e => {
+        if (userIcon.classList.contains('clicked')) {
+            userIcon.classList.remove('clicked')
+            document.getElementById('up').hidden = true
+            userContainer.style.zIndex = 0;
+            userDisplay.hidden = true
+        } else {
+            userIcon.classList.add('clicked')
+            document.getElementById('up').hidden = false
+            userDisplay.hidden = false
+            userContainer.style.zIndex = 1;
+        }
+    })
+
+
 
     document.getElementById('user-display').innerHTML = `
     <div id="user-display-content">
@@ -53,19 +78,23 @@ document.addEventListener("DOMContentLoaded", () => {
     signupModal.innerHTML =  `
         <div id="modal-content">
             <span class="close">&times;</span>
-            <p>Registration Form</p>
+            <h3>Registration Form</h3>
         </div>
     `
+    let errorMsg = document.createElement('div')
+    document.getElementById('modal-content').append(errorMsg)
     
     let signupForm = document.createElement('form')
+    signupForm.id = "sign-up-form"
     signupForm.innerHTML = `
-        <input type="text" placeholder="Name">
-        <input type="email" placeholder="Email"><br>
-        <input type="submit" value="Register">
+        <input type="text" placeholder="Name" required>
+        <input type="email" placeholder="Email" required><br>
+        <input type="password" placeholder="Password" required><br>
+        <input type="password" placeholder="Password Confirmation" required><br>
+        
+        <input type="submit" value="Register" required>
     `
-    let errorMsg = document.createElement('div')
-    signupForm.append(errorMsg)
-
+    
     document.getElementById('modal-content').append(signupForm)
     signupForm.addEventListener('submit', e => {
         e.preventDefault();
@@ -77,13 +106,15 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             body: JSON.stringify({
                 name: e.target[0].value,
-                email: e.target[1].value
+                email: e.target[1].value,
+                password: e.target[2].value,
+                password_confirmation: e.target[3].value
             })
         }).then(resp => resp.json()).then(user => {
             if (user.error) {
                 errorMsg.innerHTML = ""
                 user.error.forEach(msg => {
-                    errorMsg.innerHTML += `<p style="color:red;">${msg}</p>`
+                    errorMsg.innerHTML += `<p class="error">${msg}</p>`
                 })
             } else {
                 // Reload Page
@@ -155,44 +186,48 @@ function displayLogin() {
     loginContent.innerHTML = `
     <h2>Log In</h2>
     <form>
-        <div id='form-input'>
+        <div class='form-input'>
             <input type="email" name="email" placeholder="Email" required>
             <i class="fas fa-user"></i>
         </div>
+
+        <div class='form-input'>
+            <input type="password" name="password" placeholder="Password" required>
+            <i class="fas fa-unlock-alt"></i>
+        </div>
+
         <input type="submit" value="Login">
-    </form>
+    </form><br>
     <span id="new-user-line">Are you a new user? </span>`
+
+    let errorMsg = document.createElement('h4')
+    errorMsg.id = 'error-msg'
+    loginContent.insertBefore(errorMsg, loginContent.querySelector('form'))
 
     const loginForm = loginContainer.querySelector('form')
     loginForm.addEventListener('submit', e => {
         e.preventDefault()
         const email = e.target[0].value
+        const password = e.target[1].value
         fetch(`${BASE_URL}/login`, {
             method: "POST",
             headers: {
               "Content-Type": 'application/json'
             },
             body: JSON.stringify({
-              "email": email
+              "email": email,
+              "password": password
             })
         }).then(res => res.json()).then(data => {
             if (data.id) {
                 localStorage.setItem("user_id", data.id)
-
-                document.getElementById('websites-link').addEventListener('click', e => {
-                    displayHomePage(data)
-                })
-
                 displayHomePage(data)
             } else {
                 console.log(data.error)
-                if (!document.getElementById('error-msg')) {
-                    let errorMsg = document.createElement('h4')
-                    errorMsg.id = 'error-msg'
+                // if (!document.getElementById('error-msg')) {
                     errorMsg.innerText = data.error
                     errorMsg.classList.add('error')
-                    loginContent.insertBefore(errorMsg, document.getElementById('new-user-line'))
-                }
+                // }
             }   
         })
     })
@@ -213,6 +248,11 @@ function displayLogin() {
     
 }
 
+// If adding a display how to use page
+// document.getElementById('websites-link').addEventListener('click', e => {
+//     displayHomePage(data)
+// })
+
 // Display Home Page 
 function displayHomePage(user) {
     document.getElementById('websites-link').classList.add('clicked')
@@ -221,6 +261,7 @@ function displayHomePage(user) {
 
     let userContainer = document.getElementById('user-container')
     userContainer.hidden = false
+    userContainer.style.zIndex = 0;
 
     let userIcon = document.getElementById('user-icon')
     userIcon.classList.remove('clicked')
@@ -232,39 +273,18 @@ function displayHomePage(user) {
     document.getElementById('user-name').innerText = user.name
     document.getElementById('user-email').innerText = user.email
 
-    userIcon.addEventListener('click', e => {
-        if (userIcon.classList.contains('clicked')) {
-            userIcon.classList.remove('clicked')
-            document.getElementById('up').hidden = true
-            userContainer.style.zIndex = 0;
-            userDisplay.hidden = true
-        } else {
-            userIcon.classList.add('clicked')
-            document.getElementById('up').hidden = false
-            userDisplay.hidden = false
-            userContainer.style.zIndex = 1;
-        }
-    })
-    // userContainer.innerHTML = ""
-    // userContainer.innerHTML = `${user.name}
-    // <button id="logout">Logout</button>`
-
     document.getElementById('main-content').hidden = false
 
     // UL element to display all of the user's websites
     let uList = document.getElementById('website-list')
     uList.innerHTML = ""
-
-    // let newLi = document.createElement('li')
-    // newLi.id = "new-website-button"
-    // newLi.innerText = "Register New Website"
-    // uList.appendChild(newLi)
     
     // Fetch request to get all websites
     fetch(`${BASE_URL}/websites`).then(resp => resp.json()).then(data => {
         data.forEach(website => {
             if (website.user_id === user.id) {
-                uList.innerHTML += `<li class="list-item" data-id=${website.id}>${website.name}</li>`
+                uList.innerHTML += `<li class="list-item" data-id=${website.id}>${website.name} 
+                <i class="fas fa-angle-double-right" hidden></i></li>`
             }
         })
     })
@@ -284,7 +304,7 @@ function displayHomePage(user) {
     let backWebsite = document.createElement('button')
     backWebsite.id = 'back-website-button'
     backWebsite.classList.add('back')
-    backWebsite.innerHTML = `<i class="fas fa-backward"></i> Back to Website Details`
+    backWebsite.innerHTML = `<i class="fas fa-backward"></i> Back`
     backWebsite.hidden = true
     webDetails.appendChild(backWebsite)
 
@@ -297,13 +317,14 @@ function displayHomePage(user) {
 
     let editWebsite = document.createElement('button')
     editWebsite.id = 'edit-website-button'
-    editWebsite.innerText = "Edit Website"
+    editWebsite.classList.add("icon-button")
+    editWebsite.innerHTML = `Edit Details<i class="far fa-edit"></i>`
     editWebsite.hidden = true
     webDetails.appendChild(editWebsite)
 
-    let deleteWebsite = document.createElement('button')
-    deleteWebsite.id = 'delete-website-button'
-    deleteWebsite.innerText = "Delete Website"
+    let deleteWebsite = document.createElement('div')
+    deleteWebsite.id = 'delete-website-div'
+
     deleteWebsite.hidden = true
     webDetails.appendChild(deleteWebsite)
 
@@ -341,10 +362,11 @@ function displayHomePage(user) {
             fetch(`${BASE_URL}/websites/${e.target.dataset.id}`).then(resp => resp.json()).then(website => {
 
                 // add icon to selected
-                const icon = document.createElement('i')
-                icon.classList.add("fas")
-                icon.classList.add("fa-angle-double-right")
-                e.target.append(icon)
+                // const icon = document.createElement('i')
+                // icon.classList.add("fas")
+                // icon.classList.add("fa-angle-double-right")
+                // e.target.append(icon)
+                e.target.querySelector('i').hidden = false
                 displayWebsite(website)
             })  
         }
@@ -358,13 +380,12 @@ function displayHomePage(user) {
 }
 
 function clearListIcons() {
+    // debugger
     let uL = document.getElementById('website-list')
-    let lists = document.querySelectorAll('li')
+    let lists = uL.querySelectorAll('li')
     let i;
     for (i = 0; i < lists.length; i++) {
-        if (lists[i].querySelector('i')) {
-            lists[i].removeChild(lists[i].querySelector('i'))
-        }
+        lists[i].querySelector('i').hidden = true
     }
 }
 
@@ -384,14 +405,14 @@ function displayWebsite(website) {
     // Default: If no website given
     if (website === "none") {
         document.getElementById('edit-website-button').hidden = true
-        document.getElementById('delete-website-button').hidden = true
+        document.getElementById('delete-website-div').hidden = true
 
         mainDetails.innerHTML = `<h2>Select Website to See Details<h2>`
         subDisplayTop.innerHTML = ""
     } else {
         mainDetails.innerHTML = `
         <h2>${website.name}</h2>
-        <p><a href=${website.url}>${website.url}</a></p>
+        <p class='website-link'><a href=${website.url} target="_blank">${website.url}</a></p>
        `
 
         let editButton = document.getElementById('edit-website-button')
@@ -402,8 +423,13 @@ function displayWebsite(website) {
         })
 
         
-        let deleteWebsiteButton = document.getElementById('delete-website-button')
-        deleteWebsiteButton.hidden = false
+        let deleteWebsiteButton = document.createElement('button')
+        deleteWebsiteButton.classList.add('icon-button')
+        deleteWebsiteButton.innerHTML = `Delete Website<i class="fas fa-trash-alt"></i>`
+        let deleteWebsiteDiv = document.getElementById('delete-website-div')
+        deleteWebsiteDiv.innerHTML = ''
+        deleteWebsiteDiv.append(deleteWebsiteButton)
+        deleteWebsiteDiv.hidden = false
         deleteWebsiteButton.addEventListener('click', e => {
             deleteWebsite(website)
         })
@@ -415,14 +441,13 @@ function displayWebsite(website) {
         <p>Minimum Password Length: ${website.password_min}</p>
         <p>Maximum Password Length: ${website.password_max}</p>`
 
+        let unpermittedCharString = website.chars_not_permitted.join(", ")
         let unpermittedChars = document.createElement('p')
-        unpermittedChars.innerText = "Unpermitted Special Characters:"
+        unpermittedChars.innerText = "Unpermitted Special Characters: "
         if (website.chars_not_permitted.length === 0){
             unpermittedChars.innerText += " none"
         } else {
-            website.chars_not_permitted.forEach(char => {
-                unpermittedChars.innerText += ` ${char}`
-            })
+            unpermittedChars.innerText += unpermittedCharString
         }  
         subDisplayTop.appendChild(unpermittedChars)
 
@@ -436,7 +461,7 @@ function displayWebsite(website) {
         if (website.accounts.length === 0) {
             accountContainer.innerHTML += "<p>No Accounts Created</p>"
         } else {
-            accountContainer.innerHTML += "<p>Select Account by Username</p>"
+            // accountContainer.innerHTML += "<p>Select Account by Username</p>"
 
             // Form to select account and submit
             let accountForm = document.createElement('form')
@@ -445,19 +470,23 @@ function displayWebsite(website) {
             // Add account options to select
             let select = document.createElement('select')
             select.id = "account-select"
+            select.required = true
+            select.innerHTML = `<option value="" disabled selected hidden>Select Account by Username...</option>`
 
             website.accounts.forEach(account => {
                 if (account.website_id === website.id){
                     select.innerHTML += `<option value=${account.username} data-id=${account.id}>${account.username}</option>`
                 }
             })
+
             accountForm.appendChild(select)
             accountContainer.appendChild(accountForm)
 
             let submitButton = document.createElement('input')
-            submitButton.id = "account-submit"
+            submitButton.id = "go"
+            submitButton.classList.add("small")
             submitButton.type="submit"
-            submitButton.value="Account Details"
+            submitButton.value="Go"
             accountForm.appendChild(submitButton)
 
             accountForm.addEventListener('submit', e => {
@@ -475,7 +504,8 @@ function displayWebsite(website) {
         // Button to create new account for website
         let createButton = document.createElement('button')
         createButton.id = "create-button"
-        createButton.innerText = "Register New Account"
+        createButton.classList.add("icon-button")
+        createButton.innerHTML = `Register New Account<i class="fas fa-plus"></i>`
         accountContainer.appendChild(createButton)
 
         createButton.addEventListener('click', e => {
@@ -487,9 +517,10 @@ function displayWebsite(website) {
     
 // Function to display account data and get password
 function displayAccount(account, website) {
+    let main = document.querySelector('main')
     // Hide Buttons
     document.getElementById('edit-website-button').hidden = true
-    document.getElementById('delete-website-button').hidden = true
+    document.getElementById('delete-website-div').hidden = true
     document.getElementById('back-account-button').hidden = true
 
     let subDisplayTop = document.getElementById('sub-display-top')
@@ -500,8 +531,8 @@ function displayAccount(account, website) {
     backToWebsiteDetails(website)
 
     subDisplayTop.innerHTML = `
-    <h3> Account for: </h3>
-    <p id="account-username">Username: ${account.username} <button id="username-edit" style="display:inline;">Edit Username</button></p>
+    <h3>Account Details</h3>
+    <p id="account-username">Username: <div id="username" class="bold">${account.username}</div> <button id="username-edit" class="icon-button" style="display:inline;">Edit <i class="far fa-edit"></i></button></p>
     `    
     document.getElementById('username-edit').addEventListener('click', e => {
         updateAccountUsername(account, website)
@@ -513,20 +544,48 @@ function displayAccount(account, website) {
 
     let passwordForm = document.createElement('form')
     passwordForm.innerHTML = `
-    Enter Key Word/Phrase to Get Password
-    <input type="text">
-    <input type="submit" value="Go">`
+    Enter Key Word/Phrase to Encrypt
+    <input type="text" pattern=".*[^ ].*" oninvalid="this.setCustomValidity('Key word/phrase cannot be blank')"
+    oninput="this.setCustomValidity('')" required>
+    <input type="submit" class="small" value="Go">`
     subForm.append(passwordForm)
 
     let displayPassword = document.createElement('div')
+    displayPassword.id = "password-display"
+
     subDisplayBottom.innerHTML = ''
     subDisplayBottom.appendChild(displayPassword)
 
     passwordForm.addEventListener('submit', e => {
         e.preventDefault()
         let keyword = e.target[0].value
-        let password = generatePassword(keyword, account.key, account.special_char, account.char_frequency, account.digit, account.digit_frequency, website.chars_not_permitted, website.password_min, website.password_max)   
-        displayPassword.innerHTML = `<h3>Password:</h3><h3 style="color:red;">${password}</h3>`
+        
+        displayEncrypted(account, website, keyword)
+        // if (!displayPassword.classList.contains('displaying')) {
+        //     displayPassword.classList.add('displaying')
+        //     let keyword = e.target[0].value
+        //     let password = generatePassword(keyword, account.key, account.special_char, account.char_frequency, account.digit, account.digit_frequency, website.chars_not_permitted, website.password_min, website.password_max)   
+        //     displayPassword.innerHTML = `<div id="encrypt-div"><h3>Encrypted:</h3><h3 id="encrypted">${password}</h3><button class="small">Copy</button>`
+        //     document.getElementById('encrypt-div').querySelector('button').addEventListener('click', e => {
+        //         let range = document.createRange();
+        //         range.selectNode(e.target.previousSibling);
+        //         window.getSelection().removeAllRanges(); // clear current selection
+        //         window.getSelection().addRange(range); // to select text
+        //         document.execCommand("copy");
+        //         window.getSelection().removeAllRanges();// to deselect
+
+        //         document.getElementById('copied').classList.add('animate')
+        //         window.setTimeout(() => {
+        //             document.getElementById('copied').classList.remove('animate')
+        //         }, 2500);
+        //     })
+
+        //     window.setTimeout(() => {
+        //         displayPassword.innerHTML = ""
+        //         displayPassword.classList.remove('displaying')
+        //     }, 5000)
+        // }
+        
     })
 
     let newKeysButton = document.createElement('button')
@@ -548,6 +607,33 @@ function displayAccount(account, website) {
     })
 }
 
+function displayEncrypted(account, website, keyword) {
+    let displayPassword = document.getElementById('password-display')
+    if (!displayPassword.classList.contains('displaying')) {
+        displayPassword.classList.add('displaying')
+        
+        let password = generatePassword(keyword, account.key, account.special_char, account.char_frequency, account.digit, account.digit_frequency, website.chars_not_permitted, website.password_min, website.password_max)   
+        displayPassword.innerHTML = `<div id="encrypt-div"><h3>Encrypted:</h3><h3 id="encrypted">${password}</h3><button class="small">Copy</button>`
+        document.getElementById('encrypt-div').querySelector('button').addEventListener('click', e => {
+            let range = document.createRange();
+            range.selectNode(e.target.previousSibling);
+            window.getSelection().removeAllRanges(); // clear current selection
+            window.getSelection().addRange(range); // to select text
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();// to deselect
+
+            document.getElementById('copied').classList.add('animate')
+            window.setTimeout(() => {
+                document.getElementById('copied').classList.remove('animate')
+            }, 2500);
+        })
+
+        window.setTimeout(() => {
+            displayPassword.innerHTML = ""
+            displayPassword.classList.remove('displaying')
+        }, 5000)
+    }
+}
 
 
 // Back button to website details
