@@ -39,7 +39,7 @@ class UsersController < ApplicationController
 				render json: {"error": user.errors.full_messages}, status: 406
 			end
 		else
-			render json: {"error": ["Current Password Incorrect"]}, status: 406
+			render json: {"error": ["Current password is incorrect"]}, status: 406
 		end
 	end		
 

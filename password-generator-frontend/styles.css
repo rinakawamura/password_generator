@@ -75,11 +75,13 @@ main {
 h2{
     margin: 0;
     padding: 0;
+    font-weight: 500;
 }
 
 h3 {
     margin: 0;
     padding: 0;
+
 }
 
 p{
@@ -190,7 +192,7 @@ input[type="submit"].small, button.small {
     padding: 3px 12px; 
     padding-left: 3%;
     position: relative;
-    bottom: 15vh;
+    bottom: 9vh;
     right: 18vw;
     margin: 0;
 }
@@ -232,7 +234,7 @@ input[type="submit"].small, button.small {
     cursor: pointer;
     padding-right: 40%;
     font-size: 1.5em;
-    font-weight: bolder;
+    font-weight: 500;
 }
 
 #user-icon {
@@ -240,7 +242,8 @@ input[type="submit"].small, button.small {
     top: 27px;
     right: 25%;
     cursor: pointer;
-    font-size: 25px;
+    font-size: 24px;
+
 }
 
 .clicked {
@@ -251,7 +254,7 @@ input[type="submit"].small, button.small {
 #up {
     position: absolute;
     right: 27%;
-    top: 69px;
+    top: 68px;
     cursor: pointer;
     color: #5f889e;
     z-index: 2;
@@ -266,7 +269,7 @@ input[type="submit"].small, button.small {
     z-index: 1;
     border-style: solid;
     border-color: #5f889e;
-    border-width: 2px;
+    border-width: 1px;
     background-color: white;
 }
 
@@ -281,6 +284,7 @@ input[type="submit"].small, button.small {
 #user-display-content p {
     margin: 0px;
     visibility: inherit;
+    font-weight: 400;
 }
 
 #user-name {
@@ -289,7 +293,7 @@ input[type="submit"].small, button.small {
 }
 
 #user-email {
-    font-size: 12px;
+    font-size: 15px;
 }
 
 #user-display button {
@@ -494,7 +498,7 @@ font-family: 'Darker Grotesque', sans-serif;
 }
 
 #main-details h2 {
-    margin-top: 8%;
+    margin-top: 5%;
 }
 
 .edit-delete {
@@ -576,5 +580,26 @@ font-family: 'Darker Grotesque', sans-serif;
 }
 
 
+/* USER PROFILE */
 
+#user-profile {
+    width: 40vw;
+}
 
+#user-profile input {
+    width: 60%;
+}
+
+#user-profile input[type="submit"] {
+    width: 20%;
+    margin: 0% 10% 5%;
+}
+#user-profile h2{
+    margin: 5%;
+    font-weight: 400;
+}
+
+#user-profile button {
+    margin-top: 8%;
+    padding: 5%;
+}

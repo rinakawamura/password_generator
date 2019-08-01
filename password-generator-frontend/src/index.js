@@ -3,10 +3,6 @@ const BASE_URL = "http://localhost:3000"
 document.addEventListener("DOMContentLoaded", () => {
     let main = document.querySelector('main')
     main.innerHTML = '<i id="key-icon" class="fas fa-key fa-3x"></i>'
-    // let keyIcon = document.createElement('div')
-    // keyIcon.id = 'key-icon'
-    // keyIcon.innerHTML = '<i class="fas fa-key fa-3x"></i>'
-    // main.append(keyIcon)
 
     let copied = document.createElement('div')
     copied.id = "copied"
@@ -55,8 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     editUserButton.id = 'edit-user-button'
     editUserButton.innerText = "Edit Profile"
     document.getElementById('user-display').append(editUserButton)
-
-
 
     const logoutButton = document.createElement('button')
     logoutButton.id = 'logout-button'
@@ -273,13 +267,6 @@ function displayHomePage(user) {
     userContainer.hidden = false
     userContainer.style.zIndex = 0;
 
-
-    // let websitesLink = document.createElement('p')
-    // websitesLink.id = 'websites-link'
-    // websitesLink.classList.add('clicked')
-    // websitesLink.innerText = "My Websites"
-    // userContainer.insertBefore(websitesLink, document.getElementById('user-icon'))
-
     let websitesLink = document.getElementById('websites-link')
     websitesLink.classList.add('clicked')
 
@@ -289,8 +276,6 @@ function displayHomePage(user) {
             displayHomePage(user)
         }
     })    
-
-   
 
     let userIcon = document.getElementById('user-icon')
     userIcon.classList.remove('clicked')
@@ -600,31 +585,7 @@ function displayAccount(account, website) {
         let keyword = e.target[0].value
         
         displayEncrypted(account, website, keyword)
-        // if (!displayPassword.classList.contains('displaying')) {
-        //     displayPassword.classList.add('displaying')
-        //     let keyword = e.target[0].value
-        //     let password = generatePassword(keyword, account.key, account.special_char, account.char_frequency, account.digit, account.digit_frequency, website.chars_not_permitted, website.password_min, website.password_max)   
-        //     displayPassword.innerHTML = `<div id="encrypt-div"><h3>Encrypted:</h3><h3 id="encrypted">${password}</h3><button class="small">Copy</button>`
-        //     document.getElementById('encrypt-div').querySelector('button').addEventListener('click', e => {
-        //         let range = document.createRange();
-        //         range.selectNode(e.target.previousSibling);
-        //         window.getSelection().removeAllRanges(); // clear current selection
-        //         window.getSelection().addRange(range); // to select text
-        //         document.execCommand("copy");
-        //         window.getSelection().removeAllRanges();// to deselect
 
-        //         document.getElementById('copied').classList.add('animate')
-        //         window.setTimeout(() => {
-        //             document.getElementById('copied').classList.remove('animate')
-        //         }, 2500);
-        //     })
-
-        //     window.setTimeout(() => {
-        //         displayPassword.innerHTML = ""
-        //         displayPassword.classList.remove('displaying')
-        //     }, 5000)
-        // }
-        
     })
 
     let newKeysButton = document.createElement('button')
