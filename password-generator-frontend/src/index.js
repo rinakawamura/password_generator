@@ -21,11 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
     userContainer.hidden = true
     main.append(userContainer)
     userContainer.innerHTML = `
-    <p id='websites-link'>My Websites</p>
+    <p id="websites-link">My Websites</p>
     <i id='user-icon' class="far fa-user-circle"></i>
     <i id='up' class="fas fa-angle-up"></i>    
     <div id="user-display" class="clearfix"></div>
     `
+    
     let userIcon = document.getElementById('user-icon')
     let userDisplay = document.getElementById('user-display')
 
@@ -43,14 +44,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-
-
     document.getElementById('user-display').innerHTML = `
     <div id="user-display-content">
         <p id="user-name"></p>
         <p id="user-email"></p>
     </div>
     `
+
+    const editUserButton = document.createElement('button')
+    editUserButton.id = 'edit-user-button'
+    editUserButton.innerText = "Edit Profile"
+    document.getElementById('user-display').append(editUserButton)
+
+
 
     const logoutButton = document.createElement('button')
     logoutButton.id = 'logout-button'
@@ -131,6 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
     mainContent.id = 'main-content'
     mainContent.hidden = true
     main.append(mainContent)
+
+    let userProfile = document.createElement('div')
+    userProfile.id = 'user-profile'
+    userProfile.hidden = true
+    mainContent.append(userProfile)
 
     let websitesDisplay = document.createElement('div')
     websitesDisplay.id = 'websites-display'
@@ -248,20 +259,38 @@ function displayLogin() {
     
 }
 
-// If adding a display how to use page
-// document.getElementById('websites-link').addEventListener('click', e => {
-//     displayHomePage(data)
-// })
-
 // Display Home Page 
 function displayHomePage(user) {
-    document.getElementById('websites-link').classList.add('clicked')
     let main = document.querySelector('main')
     document.getElementById('login-container').hidden = true
+
+    // Hide and reveal things
+    document.getElementById('user-profile').hidden = true
+    document.getElementById('websites-display').hidden = false
+    document.getElementById('web-details').hidden = false
 
     let userContainer = document.getElementById('user-container')
     userContainer.hidden = false
     userContainer.style.zIndex = 0;
+
+
+    // let websitesLink = document.createElement('p')
+    // websitesLink.id = 'websites-link'
+    // websitesLink.classList.add('clicked')
+    // websitesLink.innerText = "My Websites"
+    // userContainer.insertBefore(websitesLink, document.getElementById('user-icon'))
+
+    let websitesLink = document.getElementById('websites-link')
+    websitesLink.classList.add('clicked')
+
+    // If adding a display how to use page
+    websitesLink.addEventListener('click', e => {
+        if (!websitesLink.classList.contains('clicked')) {
+            displayHomePage(user)
+        }
+    })    
+
+   
 
     let userIcon = document.getElementById('user-icon')
     userIcon.classList.remove('clicked')
@@ -272,6 +301,13 @@ function displayHomePage(user) {
     
     document.getElementById('user-name').innerText = user.name
     document.getElementById('user-email').innerText = user.email
+
+    document.getElementById('edit-user-button').addEventListener('click', () => {
+        document.getElementById('user-icon').classList.remove('clicked')
+        document.getElementById('user-display').hidden = true
+        document.getElementById('up').hidden = true
+        updateUserData(user)
+    })
 
     document.getElementById('main-content').hidden = false
 

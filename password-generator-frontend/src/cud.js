@@ -564,6 +564,100 @@ function afterKeySave(account, website) {
 
 // USER 
 function updateUserData(user) {
-    let mainContent = document.getElementById('main-content')
+    // Hide website data
+    document.getElementById('websites-display').hidden = true
+    document.getElementById('web-details').hidden = true
+
+    let userProfile = document.getElementById('user-profile')
+    userProfile.hidden = false
+    userProfile.innerHTML = ""
+
+    document.getElementById('websites-link').classList.remove('clicked')
+
+    let editForm = document.createElement('form')
+    userProfile.append(editForm)
+    editForm.id = 'user-edit-form'
+    editForm.innerHTML = `
+    <h2>Edit User Profile</h2>
+    Name<br>
+    <input type="text" value=${user.name} pattern=".*[^ ].*" oninvalid="this.setCustomValidity('Name cannot be blank')"
+    oninput="this.setCustomValidity('')" required><br>
+    Email<br>
+    <input type="email" value=${user.email} required><br>
+    <input type="submit" value= "Save">`
     
+    editForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const name = e.target[0].value
+        const email = e.target[1].value
+
+        fetch(`${BASE_URL}/users/${user.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email
+            })
+        }).then(resp => resp.json()).then(user => {
+            displayHomePage(user)
+        })
+    })
+
+    let passwordButton = document.createElement('button')
+    userProfile.append(passwordButton)
+    passwordButton.innerText = "Change Password"
+    passwordButton.addEventListener('click', e => {
+        updateUserPassword(user)
+    })
+}
+
+function updateUserPassword(user) {
+    let userProfile = document.getElementById('user-profile')
+    userProfile.innerHTML = ""
+
+    let passwordForm = document.createElement('form')
+    userProfile.append(passwordForm)
+    passwordForm.innerHTML = `
+    <h2>Change Password</h2>
+    <div id="user-password-error"></div><br>
+    Current Password<br>
+    <input type="password" required><br>
+    New Password<br>
+    <input type="password" required><br>
+    Password Confirmation<br>
+    <input type="password" required><br>
+    <input type="submit" value="save">`
+
+    let errorMsg = document.getElementById('user-password-error')
+
+    passwordForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const currentPassword = e.target[0].value
+        const password = e.target[1].value
+        const passwordConfirmation = e.target[2].value
+
+        fetch(`${BASE_URL}/users/password/${user.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                current_password: currentPassword,
+                password: password,
+                password_confirmation: passwordConfirmation
+            })
+        }).then(resp => resp.json()).then(user => {
+
+            if (user.error) {
+                errorMsg.innerHTML = ""
+                user.error.forEach(msg => {
+                    errorMsg.innerHTML += `<p class="error">${msg}</p>`
+                })
+            } else {
+                displayHomePage(user)
+            }
+        })
+    })
 }

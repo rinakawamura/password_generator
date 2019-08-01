@@ -450,14 +450,20 @@ font-family: 'Darker Grotesque', sans-serif;
 #search-input {
     border: 1px solid #ddd;
     text-align: left;
-    padding: 5% 10% 5% 20%;
+    padding: 10px 10px 10px 40px;
     margin: 0;
-    margin-top: 10%;
+    width: 170px;
+    height: 20px;
+}
+
+#search-form {
+    position: relative;
 }
 
 #search-form i {
-    position: relative;
-    left: 15%;
+    top: 35%;
+    position: absolute;
+    left: 10%;
     color: #5f889e;
 }
 
