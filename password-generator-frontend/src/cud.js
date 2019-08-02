@@ -1,3 +1,106 @@
+
+// USER FUNCTIONS
+
+function updateUserData(user) {
+    // Hide website data
+    document.getElementById('websites-display').hidden = true
+    document.getElementById('web-details').hidden = true
+
+    let userProfile = document.getElementById('user-profile')
+    userProfile.hidden = false
+    userProfile.innerHTML = ""
+
+    document.getElementById('websites-link').classList.remove('clicked')
+
+    let editForm = document.createElement('form')
+    userProfile.append(editForm)
+    editForm.id = 'user-edit-form'
+    editForm.innerHTML = `
+    <h2>Edit User Profile</h2>
+    Name<br>
+    <input type="text" value=${user.name} pattern=".*[^ ].*" oninvalid="this.setCustomValidity('Name cannot be blank')"
+    oninput="this.setCustomValidity('')" required><br>
+    Email<br>
+    <input type="email" value=${user.email} required><br>
+    <input type="submit" value= "Save">`
+    
+    editForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const name = e.target[0].value
+        const email = e.target[1].value
+
+        fetch(`${BASE_URL}/users/${user.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email
+            })
+        }).then(resp => resp.json()).then(user => {
+            displayHomePage(user)
+        })
+    })
+
+    let passwordButton = document.createElement('button')
+    userProfile.append(passwordButton)
+    passwordButton.innerText = "Change Password"
+    passwordButton.addEventListener('click', e => {
+        updateUserPassword(user)
+    })
+}
+
+function updateUserPassword(user) {
+    let userProfile = document.getElementById('user-profile')
+    userProfile.innerHTML = ""
+
+    let passwordForm = document.createElement('form')
+    userProfile.append(passwordForm)
+    passwordForm.innerHTML = `
+    <h2>Change Password</h2>
+    <div id="user-password-error"></div><br>
+    Current Password<br>
+    <input type="password" required><br>
+    New Password<br>
+    <input type="password" required><br>
+    Password Confirmation<br>
+    <input type="password" required><br>
+    <input type="submit" value="save">`
+
+    let errorMsg = document.getElementById('user-password-error')
+
+    passwordForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const currentPassword = e.target[0].value
+        const password = e.target[1].value
+        const passwordConfirmation = e.target[2].value
+
+        fetch(`${BASE_URL}/users/password/${user.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                current_password: currentPassword,
+                password: password,
+                password_confirmation: passwordConfirmation
+            })
+        }).then(resp => resp.json()).then(user => {
+
+            if (user.error) {
+                errorMsg.innerHTML = ""
+                user.error.forEach(msg => {
+                    errorMsg.innerHTML += `<p class="error">${msg}</p>`
+                })
+            } else {
+                displayHomePage(user)
+            }
+        })
+    })
+}
+
+
 // WEBSITE FUNCTIONS
 
 // CREATE new website
@@ -66,7 +169,6 @@ function newWebsite(user) {
             }
         }
         
-        // debugger
         // Fetch Request to POST new website data
         fetch (`${BASE_URL}/websites`, {
             method: 'POST',
@@ -93,56 +195,6 @@ function newWebsite(user) {
             }
         })
     })
-}
-
-function createCharGrid() {
-    let websiteForm = document.getElementById('website-form') 
-    let charGrid = document.getElementById('char-grid')
-
-    charGrid.innerHTML = `
-    <div class="grid-item">!</div>
-    <div class="grid-item">#</div>
-    <div class="grid-item">$</div>
-    <div class="grid-item">%</div>
-    <div class="grid-item">&</div>
-    <div class="grid-item">(</div>
-    <div class="grid-item">)</div>
-    <div class="grid-item">*</div>
-    <div class="grid-item">+</div>
-    <div class="grid-item">,</div>
-    <div class="grid-item">-</div>
-    <div class="grid-item">.</div>
-    <div class="grid-item">/</div>
-    <div class="grid-item">:</div>
-    <div class="grid-item">;</div>
-    <div class="grid-item"><</div>
-    <div class="grid-item">=</div>
-    <div class="grid-item">></div>
-    <div class="grid-item">?</div>
-    <div class="grid-item">@</div>
-    <div class="grid-item">[</div>
-    <div class="grid-item">\\</div>
-    <div class="grid-item">]</div>
-    <div class="grid-item">^</div>
-    <div class="grid-item">_</div>
-    <div class="grid-item">{</div>
-    <div class="grid-item">{</div>
-    <div class="grid-item">|</div>
-    <div class="grid-item">}</div>
-    <div class="grid-item">~</div>
-    <div class="grid-item">'</div>
-    <div class="grid-item">"</div>`
-        
-    websiteForm.addEventListener('click', e => {
-        if (e.target.classList.contains("grid-item")) {
-            if (e.target.classList.contains('grid-clicked')) {
-                e.target.classList.remove('grid-clicked')
-            } else {
-                e.target.classList.add('grid-clicked')
-            }
-        }
-    })
-    
 }
 
 // Update Website Details
@@ -217,7 +269,6 @@ function updateWebsite(website) {
             }
         }
         
-
         // Fetch request to PATCH website
         fetch(`${BASE_URL}/websites/${website.id}`, {
             method: "PATCH",
@@ -252,14 +303,6 @@ function updateWebsite(website) {
     })
 }
 
-// Helpers for creating and updating new website (sliders)
-function updateMinSlider(val) {
-    document.getElementById('display-min').innerText=val;
-}
-
-function updateMaxSlider(val) {
-    document.getElementById('display-max').innerText=val;
-}
 
 // DELETE website
 function deleteWebsite(website){
@@ -275,7 +318,6 @@ function deleteWebsite(website){
                 webList.children[i].remove()
             }
         }
-        
         displayWebsite('none')
     })
 }
@@ -357,43 +399,6 @@ function newAccount(website) {
     
 }
 
-// Form to generate encryption keys until user satisfied
-function newKeys(website) {
-    let subDisplayBottom = document.getElementById('sub-display-bottom')
-    subDisplayBottom.innerHTML = ""
-
-    let subForm = document.getElementById('sub-form')
-    subForm.innerHTML = ""
-    subForm.hidden = false 
-
-    let keysForm = document.createElement('form')
-    keysForm.innerHTML = `
-    <br><h3>Enter a key word/phrase to get your password</h3>
-    <input type="text" id="keyword" pattern=".*[^ ].*" oninvalid="this.setCustomValidity('Key word/phrase cannot be blank')"
-    oninput="this.setCustomValidity('')" required> <p style="display:inline;">
-    <input type="submit" id="password-submit" value="Go">
-    <br><br>`
-    subForm.append(keysForm)
-
-    let passwordDisplay = document.createElement('div')
-    subDisplayBottom.appendChild(passwordDisplay)
-    
-    let keys = new Object()
-
-    keysForm.addEventListener('submit', e => {
-        e.preventDefault()
-        keyword = document.getElementById("keyword").value
-        keys.key = generateRandoms(website.chars_not_permitted).key
-        keys.specialChar = generateRandoms(website.chars_not_permitted).specialChar
-        keys.charFrequency = generateRandoms(website.chars_not_permitted).charFrequency
-        keys.digit = generateRandoms(website.chars_not_permitted).digit
-        keys.digitFrequency = generateRandoms(website.chars_not_permitted).digitFrequency
-
-        passwordDisplay.innerHTML = `<h3>Password: ${generatePassword(keyword, keys.key, keys.specialChar, keys.charFrequency, keys.digit, keys.digitFrequency, website.chars_not_permitted, website.password_min, website.password_max)}</h3>`
-    })
-
-    return keys
-}
 
 // Update Account Username
 function updateAccountUsername(account, website) {
@@ -498,9 +503,113 @@ function deleteAccount(account) {
             displayWebsite(website)
         })
     })
-
 }
 
+
+// HELPER FUNCTIONS
+
+// Creates Character Grid for Unpermitted Special Characters
+function createCharGrid() {
+    let websiteForm = document.getElementById('website-form') 
+    let charGrid = document.getElementById('char-grid')
+
+    charGrid.innerHTML = `
+    <div class="grid-item">!</div>
+    <div class="grid-item">#</div>
+    <div class="grid-item">$</div>
+    <div class="grid-item">%</div>
+    <div class="grid-item">&</div>
+    <div class="grid-item">(</div>
+    <div class="grid-item">)</div>
+    <div class="grid-item">*</div>
+    <div class="grid-item">+</div>
+    <div class="grid-item">,</div>
+    <div class="grid-item">-</div>
+    <div class="grid-item">.</div>
+    <div class="grid-item">/</div>
+    <div class="grid-item">:</div>
+    <div class="grid-item">;</div>
+    <div class="grid-item"><</div>
+    <div class="grid-item">=</div>
+    <div class="grid-item">></div>
+    <div class="grid-item">?</div>
+    <div class="grid-item">@</div>
+    <div class="grid-item">[</div>
+    <div class="grid-item">\\</div>
+    <div class="grid-item">]</div>
+    <div class="grid-item">^</div>
+    <div class="grid-item">_</div>
+    <div class="grid-item">{</div>
+    <div class="grid-item">{</div>
+    <div class="grid-item">|</div>
+    <div class="grid-item">}</div>
+    <div class="grid-item">~</div>
+    <div class="grid-item">'</div>
+    <div class="grid-item">"</div>`
+        
+    websiteForm.addEventListener('click', e => {
+        if (e.target.classList.contains("grid-item")) {
+            if (e.target.classList.contains('grid-clicked')) {
+                e.target.classList.remove('grid-clicked')
+            } else {
+                e.target.classList.add('grid-clicked')
+            }
+        }
+    })  
+}
+
+// Helpers for creating and updating new website (sliders)
+function updateMinSlider(val) {
+    document.getElementById('display-min').innerText=val;
+}
+
+function updateMaxSlider(val) {
+    document.getElementById('display-max').innerText=val;
+}
+
+
+// Helper Functions for Encryption and Displaying Passwords
+
+
+// Form to generate encryption keys until user satisfied
+function newKeys(website) {
+    let subDisplayBottom = document.getElementById('sub-display-bottom')
+    subDisplayBottom.innerHTML = ""
+
+    let subForm = document.getElementById('sub-form')
+    subForm.innerHTML = ""
+    subForm.hidden = false 
+
+    let keysForm = document.createElement('form')
+    keysForm.innerHTML = `
+    <br><h3>Enter a key word/phrase to get your password</h3>
+    <input type="text" id="keyword" pattern=".*[^ ].*" oninvalid="this.setCustomValidity('Key word/phrase cannot be blank')"
+    oninput="this.setCustomValidity('')" required> <p style="display:inline;">
+    <input type="submit" id="password-submit" value="Go">
+    <br><br>`
+    subForm.append(keysForm)
+
+    let passwordDisplay = document.createElement('div')
+    subDisplayBottom.appendChild(passwordDisplay)
+    
+    let keys = new Object()
+
+    keysForm.addEventListener('submit', e => {
+        e.preventDefault()
+        keyword = document.getElementById("keyword").value
+        keys.key = generateRandoms(website.chars_not_permitted).key
+        keys.specialChar = generateRandoms(website.chars_not_permitted).specialChar
+        keys.charFrequency = generateRandoms(website.chars_not_permitted).charFrequency
+        keys.digit = generateRandoms(website.chars_not_permitted).digit
+        keys.digitFrequency = generateRandoms(website.chars_not_permitted).digitFrequency
+
+        passwordDisplay.innerHTML = `<h3>Password: ${generatePassword(keyword, keys.key, keys.specialChar, keys.charFrequency, keys.digit, keys.digitFrequency, website.chars_not_permitted, website.password_min, website.password_max)}</h3>`
+    })
+
+    return keys
+}
+
+// Password display after keys generated
 function afterKeySave(account, website) {
     document.getElementById('back-website-button').hidden = true
     let form = document.getElementById('sub-form')
@@ -529,110 +638,6 @@ function afterKeySave(account, website) {
 
     seePassword.addEventListener('click', e => {
         displayEncrypted(account, website, keyword)
-        // display.innerHTML = `<h3>Encrypted: ${generatePassword(keyword, account.key, account.special_char, account.char_frequency, account.digit, account.digit_frequency, website.chars_not_permitted, website.password_min, website.password_max)}</h3>`
     })
-
-    // let button = document.getElementById('back-account-button')
-    // let newButton = document.createElement('button')
     backToAccountDetails(account, website)
-}
-
-// USER 
-function updateUserData(user) {
-    // Hide website data
-    document.getElementById('websites-display').hidden = true
-    document.getElementById('web-details').hidden = true
-
-    let userProfile = document.getElementById('user-profile')
-    userProfile.hidden = false
-    userProfile.innerHTML = ""
-
-    document.getElementById('websites-link').classList.remove('clicked')
-
-    let editForm = document.createElement('form')
-    userProfile.append(editForm)
-    editForm.id = 'user-edit-form'
-    editForm.innerHTML = `
-    <h2>Edit User Profile</h2>
-    Name<br>
-    <input type="text" value=${user.name} pattern=".*[^ ].*" oninvalid="this.setCustomValidity('Name cannot be blank')"
-    oninput="this.setCustomValidity('')" required><br>
-    Email<br>
-    <input type="email" value=${user.email} required><br>
-    <input type="submit" value= "Save">`
-    
-    editForm.addEventListener('submit', e => {
-        e.preventDefault()
-        const name = e.target[0].value
-        const email = e.target[1].value
-
-        fetch(`${BASE_URL}/users/${user.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: name,
-                email: email
-            })
-        }).then(resp => resp.json()).then(user => {
-            displayHomePage(user)
-        })
-    })
-
-    let passwordButton = document.createElement('button')
-    userProfile.append(passwordButton)
-    passwordButton.innerText = "Change Password"
-    passwordButton.addEventListener('click', e => {
-        updateUserPassword(user)
-    })
-}
-
-function updateUserPassword(user) {
-    let userProfile = document.getElementById('user-profile')
-    userProfile.innerHTML = ""
-
-    let passwordForm = document.createElement('form')
-    userProfile.append(passwordForm)
-    passwordForm.innerHTML = `
-    <h2>Change Password</h2>
-    <div id="user-password-error"></div><br>
-    Current Password<br>
-    <input type="password" required><br>
-    New Password<br>
-    <input type="password" required><br>
-    Password Confirmation<br>
-    <input type="password" required><br>
-    <input type="submit" value="save">`
-
-    let errorMsg = document.getElementById('user-password-error')
-
-    passwordForm.addEventListener('submit', e => {
-        e.preventDefault()
-        const currentPassword = e.target[0].value
-        const password = e.target[1].value
-        const passwordConfirmation = e.target[2].value
-
-        fetch(`${BASE_URL}/users/password/${user.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                current_password: currentPassword,
-                password: password,
-                password_confirmation: passwordConfirmation
-            })
-        }).then(resp => resp.json()).then(user => {
-
-            if (user.error) {
-                errorMsg.innerHTML = ""
-                user.error.forEach(msg => {
-                    errorMsg.innerHTML += `<p class="error">${msg}</p>`
-                })
-            } else {
-                displayHomePage(user)
-            }
-        })
-    })
 }

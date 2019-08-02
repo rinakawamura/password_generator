@@ -4,14 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let main = document.querySelector('main')
     main.innerHTML = '<div id="logo"><i id="key-icon" class="fas fa-key fa-3x"></i><p>$€¢µ®1‡¥</p></div>'
 
-
+    // Copied Screen 
     let copied = document.createElement('div')
     copied.id = "copied"
     copied.classList.add('center')
-    // copied.hidden = true
     copied.innerHTML = `<p class="center">Copied!</p>`
     main.append(copied)
 
+    // User Container: User Profile Icon and Display
     let userContainer = document.createElement('div')
     userContainer.id = 'user-container'
     userContainer.classList.add("clearfix")
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <i id='up' class="fas fa-angle-up"></i>    
     <div id="user-display" class="clearfix"></div>
     `
-    
+
     let userIcon = document.getElementById('user-icon')
     let userDisplay = document.getElementById('user-display')
 
@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
     `
 
+    // User Profile Buttons (Edit, Logout)
     const editUserButton = document.createElement('button')
     editUserButton.id = 'edit-user-button'
     editUserButton.innerText = "Edit Profile"
@@ -62,6 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     document.getElementById('user-display').append(logoutButton)
 
+
+    // Login Page + Sign Up Modal
     const loginContainer = document.createElement('div')
     loginContainer.id = 'login-container'
     main.append(loginContainer)
@@ -128,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('signup-modal').hidden = true
     })
 
+    // Main Content
     let mainContent = document.createElement('div')
     mainContent.id = 'main-content'
     mainContent.hidden = true
@@ -155,7 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     <input id= "search-input" type="text" onkeyup="search()" placeholder="Search for Websites...">`
     websitesDisplay.insertBefore(searchInput, uList)
 
-
     // Button to add new website
     let newWebsiteButton = document.createElement('button')
     newWebsiteButton.id = "new-website-button"
@@ -167,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
     webDetails.id = "web-details"
     mainContent.appendChild(webDetails)
     
-    
+    // Check if user is logged in
     if (localStorage.getItem('user_id')){
         const user_id = localStorage.getItem('user_id')
         fetch(`${BASE_URL}/users/${user_id}`).then(res=> res.json()).then(user => {
@@ -229,11 +232,8 @@ function displayLogin() {
                 localStorage.setItem("user_id", data.id)
                 displayHomePage(data)
             } else {
-                console.log(data.error)
-                // if (!document.getElementById('error-msg')) {
-                    errorMsg.innerText = data.error
-                    errorMsg.classList.add('error')
-                // }
+                errorMsg.innerText = data.error
+                errorMsg.classList.add('error')
             }   
         })
     })
@@ -249,17 +249,14 @@ function displayLogin() {
 
     signupLink.addEventListener('click', e => {
         document.getElementById('signup-modal').hidden = false
-    })
-
-    
+    })   
 }
 
 // Display Home Page 
 function displayHomePage(user) {
     let main = document.querySelector('main')
-    document.getElementById('login-container').hidden = true
-
     // Hide and reveal things
+    document.getElementById('login-container').hidden = true
     document.getElementById('user-profile').hidden = true
     document.getElementById('websites-display').hidden = false
     document.getElementById('web-details').hidden = false
@@ -376,20 +373,12 @@ function displayHomePage(user) {
     subDetails.appendChild(subDisplayBottom)
 
     uList.addEventListener('click', e => {
+
         // clear icons from all uLists
         clearListIcons()
-        // if (e.target.id === "new-website-button"){
-        //     newWebsite(user)
-        // } else 
         if (e.target.classList.contains('list-item')) {
             // Fetch single website data
             fetch(`${BASE_URL}/websites/${e.target.dataset.id}`).then(resp => resp.json()).then(website => {
-
-                // add icon to selected
-                // const icon = document.createElement('i')
-                // icon.classList.add("fas")
-                // icon.classList.add("fa-angle-double-right")
-                // e.target.append(icon)
                 e.target.querySelector('i').hidden = false
                 displayWebsite(website)
             })  
@@ -403,18 +392,9 @@ function displayHomePage(user) {
     displayWebsite("none")
 }
 
-function clearListIcons() {
-    // debugger
-    let uL = document.getElementById('website-list')
-    let lists = uL.querySelectorAll('li')
-    let i;
-    for (i = 0; i < lists.length; i++) {
-        lists[i].querySelector('i').hidden = true
-    }
-}
-
 // Function to get website details
 function displayWebsite(website) {
+    
     // Hide unneccessary elements
     document.getElementById('sub-form').hidden = true  
     document.getElementById('sub-display-bottom').hidden = true
@@ -436,9 +416,8 @@ function displayWebsite(website) {
     } else {
         mainDetails.innerHTML = `
         <h2>${website.name}</h2>
-        <p class='website-link'><a href=${website.url} target="_blank">${website.url}</a></p>
+        <p class='website-link'><a href='https://${website.url}' target="_blank">${website.url}</a></p>
        `
-
         let editButton = document.getElementById('edit-website-button')
         editButton.hidden = false
 
@@ -486,8 +465,6 @@ function displayWebsite(website) {
         if (website.accounts.length === 0) {
             accountContainer.innerHTML += "<p>No Accounts Created</p>"
         } else {
-            // accountContainer.innerHTML += "<p>Select Account by Username</p>"
-
             // Form to select account and submit
             let accountForm = document.createElement('form')
             accountForm.id = "account-form"
@@ -637,6 +614,8 @@ function displayEncrypted(account, website, keyword) {
 }
 
 
+// HELPER FUNCTIONS
+
 // Back button to website details
 function backToWebsiteDetails(website) {
     let button = document.getElementById('back-website-button')
@@ -658,9 +637,6 @@ function backToAccountDetails(account, website) {
     })
 }
 
-
-
-
 // Search bar functionality
 function search() {
     let input = document.getElementById('search-input')
@@ -676,5 +652,15 @@ function search() {
         } else {
             lis[i].hidden = true
         }
+    }
+}
+
+// Clears Arrows on List Elements
+function clearListIcons() {
+    let uL = document.getElementById('website-list')
+    let lists = uL.querySelectorAll('li')
+    let i;
+    for (i = 0; i < lists.length; i++) {
+        lists[i].querySelector('i').hidden = true
     }
 }
