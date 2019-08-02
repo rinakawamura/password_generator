@@ -1,5 +1,17 @@
 /* Document Details */
 
+#logo {
+    position: absolute;
+}
+
+#logo p {
+    position: relative;
+    top: 14vh;
+    left: 11vw;
+    font-size: 2em;
+    color: #5f889e;
+}
+
  #char-grid {
      display: grid;
      height: 20vh;
@@ -424,6 +436,7 @@ font-family: 'Darker Grotesque', sans-serif;
 
 /* Websites Display */
 #websites-display {
+    margin-top: 3%;
     flex-grow: 1;
     visibility: inherit;
     padding: 0 5%;

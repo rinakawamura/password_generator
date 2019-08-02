@@ -2,7 +2,8 @@ const BASE_URL = "http://localhost:3000"
 
 document.addEventListener("DOMContentLoaded", () => {
     let main = document.querySelector('main')
-    main.innerHTML = '<i id="key-icon" class="fas fa-key fa-3x"></i>'
+    main.innerHTML = '<div id="logo"><i id="key-icon" class="fas fa-key fa-3x"></i><p>$€¢µ®1‡¥</p></div>'
+
 
     let copied = document.createElement('div')
     copied.id = "copied"
