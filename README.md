@@ -1,3 +1,3 @@
 # Password Generator
 
-![] (Security Demo.gif)
+![]security_demo.gif
